@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:gpt_markdown/gpt_markdown.dart';
 import '../controller/streaming_text_controller.dart';
 import '../utils/latex_processor.dart';
+import '../utils/markdown_auto_close.dart';
 
 /// A widget that displays streaming text with real-time updates and markdown support.
 ///
@@ -151,8 +152,7 @@ class StreamingText extends StatefulWidget {
     String name,
     String code,
     bool closed,
-  )?
-  codeBuilder;
+  )? codeBuilder;
 
   /// Custom builder for LaTeX expressions in markdown content.
   final Widget Function(
@@ -160,20 +160,18 @@ class StreamingText extends StatefulWidget {
     String tex,
     TextStyle textStyle,
     bool inline,
-  )?
-  latexBuilder;
+  )? latexBuilder;
 
   /// Custom builder for source tags in markdown content.
   final Widget Function(
     BuildContext context,
     String content,
     TextStyle textStyle,
-  )?
-  sourceTagBuilder;
+  )? sourceTagBuilder;
 
   /// Custom builder for highlighted text in markdown content.
   final Widget Function(BuildContext context, String text, TextStyle style)?
-  highlightBuilder;
+      highlightBuilder;
 
   /// Custom builder for links in markdown content.
   final Widget Function(
@@ -181,8 +179,7 @@ class StreamingText extends StatefulWidget {
     InlineSpan text,
     String url,
     TextStyle style,
-  )?
-  linkBuilder;
+  )? linkBuilder;
 
   @override
   State<StreamingText> createState() => _StreamingTextState();
@@ -603,9 +600,8 @@ class _StreamingTextState extends State<StreamingText>
 
     for (int i = 0; i < units.length; i++) {
       final unit = units[i];
-      final unitLength = unit == '\n'
-          ? 1
-          : unit.length + (i > 0 ? 1 : 0); // +1 for space
+      final unitLength =
+          unit == '\n' ? 1 : unit.length + (i > 0 ? 1 : 0); // +1 for space
       if (displayedLength + unitLength > _displayedText.length) {
         break;
       }
@@ -685,9 +681,8 @@ class _StreamingTextState extends State<StreamingText>
 
     // v1.3.3: Check if stream is already broadcast to prevent double-wrapping
     final stream = widget.stream!;
-    final effectiveStream = stream.isBroadcast
-        ? stream
-        : stream.asBroadcastStream();
+    final effectiveStream =
+        stream.isBroadcast ? stream : stream.asBroadcastStream();
 
     _streamSubscription = effectiveStream.listen(
       (data) {
@@ -788,8 +783,7 @@ class _StreamingTextState extends State<StreamingText>
           : _splitMarkdownAwareWords(widget.text);
     }
 
-    final isRTL =
-        widget.textDirection == TextDirection.rtl ||
+    final isRTL = widget.textDirection == TextDirection.rtl ||
         _containsArabic(widget.text);
 
     int unitIndex = 0;
@@ -850,8 +844,7 @@ class _StreamingTextState extends State<StreamingText>
 
         if (_fadeInAllowed &&
             !(widget.latexEnabled && _containsLatexInUnits(newUnits))) {
-          final newlyAddedLength =
-              newUnits.join(' ').length +
+          final newlyAddedLength = newUnits.join(' ').length +
               (newUnits.length > 1 ? (newUnits.length - 1) : 0);
 
           if (isRTL) {
@@ -956,9 +949,8 @@ class _StreamingTextState extends State<StreamingText>
 
       final chunkSize = widget.chunkSize;
       final remainingUnits = oldTextUnits.length - index;
-      final currentChunkSize = chunkSize > remainingUnits
-          ? remainingUnits
-          : chunkSize;
+      final currentChunkSize =
+          chunkSize > remainingUnits ? remainingUnits : chunkSize;
 
       // v1.3.3: Use safe setState
       _safeSetState(() {
@@ -1006,9 +998,8 @@ class _StreamingTextState extends State<StreamingText>
 
       final chunkSize = widget.chunkSize;
       final remainingUnits = units.length - index;
-      final currentChunkSize = chunkSize > remainingUnits
-          ? remainingUnits
-          : chunkSize;
+      final currentChunkSize =
+          chunkSize > remainingUnits ? remainingUnits : chunkSize;
 
       // v1.3.3: Use safe setState
       _safeSetState(() {
@@ -1156,9 +1147,8 @@ class _StreamingTextState extends State<StreamingText>
 
       final chunkSize = widget.chunkSize;
       final remainingUnits = units.length - index;
-      final currentChunkSize = chunkSize > remainingUnits
-          ? remainingUnits
-          : chunkSize;
+      final currentChunkSize =
+          chunkSize > remainingUnits ? remainingUnits : chunkSize;
 
       // v1.3.3: Use safe setState
       _safeSetState(() {
@@ -1333,22 +1323,19 @@ class _StreamingTextState extends State<StreamingText>
     if (_isError) {
       return Text(
         'Error: ${_errorMessage ?? 'Unknown error'}',
-        style:
-            widget.style?.copyWith(color: Colors.red) ??
+        style: widget.style?.copyWith(color: Colors.red) ??
             const TextStyle(color: Colors.red),
       );
     }
 
     final effectiveStyle = widget.style ?? DefaultTextStyle.of(context).style;
     final isRTLText = _containsArabic(_displayedText);
-    final effectiveTextDirection =
-        widget.textDirection ??
+    final effectiveTextDirection = widget.textDirection ??
         (isRTLText ? TextDirection.rtl : TextDirection.ltr);
 
     // Force RTL alignment for Arabic text
-    final effectiveAlignment = isRTLText
-        ? TextAlign.right
-        : (widget.textAlign ?? TextAlign.left);
+    final effectiveAlignment =
+        isRTLText ? TextAlign.right : (widget.textAlign ?? TextAlign.left);
 
     // If markdown is enabled, wrap with RTL directionality
     if (widget.markdownEnabled) {
@@ -1357,8 +1344,8 @@ class _StreamingTextState extends State<StreamingText>
         alignment: effectiveAlignment == TextAlign.right
             ? Alignment.centerRight
             : (effectiveAlignment == TextAlign.center
-                  ? Alignment.center
-                  : Alignment.centerLeft),
+                ? Alignment.center
+                : Alignment.centerLeft),
         child: _buildMarkdownBody(),
       );
 
@@ -1437,8 +1424,8 @@ class _StreamingTextState extends State<StreamingText>
         crossAxisAlignment: widget.textAlign == TextAlign.center
             ? CrossAxisAlignment.center
             : isRTL
-            ? CrossAxisAlignment.end
-            : CrossAxisAlignment.start,
+                ? CrossAxisAlignment.end
+                : CrossAxisAlignment.start,
         children: lines.map((line) {
           if (line.isEmpty) return const SizedBox(height: 20);
 
@@ -1451,8 +1438,8 @@ class _StreamingTextState extends State<StreamingText>
             alignment: effectiveAlignment == TextAlign.right
                 ? Alignment.centerRight
                 : effectiveAlignment == TextAlign.center
-                ? Alignment.center
-                : Alignment.centerLeft,
+                    ? Alignment.center
+                    : Alignment.centerLeft,
             child: Wrap(
               direction: Axis.horizontal,
               alignment: isRTL ? WrapAlignment.end : WrapAlignment.start,
@@ -1464,14 +1451,11 @@ class _StreamingTextState extends State<StreamingText>
                 // Calculate base index for animation
                 final baseIndex = isRTL
                     ? _displayedText.length -
-                          lines
-                              .take(lines.indexOf(line) + 1)
-                              .join('\n')
-                              .length +
-                          wordIndex
+                        lines.take(lines.indexOf(line) + 1).join('\n').length +
+                        wordIndex
                     : lines.take(lines.indexOf(line)).join('\n').length +
-                          words.take(wordIndex).join(' ').length +
-                          wordIndex;
+                        words.take(wordIndex).join(' ').length +
+                        wordIndex;
 
                 return Row(
                   mainAxisSize: MainAxisSize.min,
@@ -1556,8 +1540,7 @@ class _StreamingTextState extends State<StreamingText>
   Widget _buildAnimatedText(String text, int index, TextStyle baseStyle) {
     final controller = _characterAnimations[index];
     final isArabicText = _containsArabic(text);
-    final effectiveTextDirection =
-        widget.textDirection ??
+    final effectiveTextDirection = widget.textDirection ??
         (isArabicText ? TextDirection.rtl : TextDirection.ltr);
 
     // If no controller or fade-in is disallowed, just render static text
@@ -1679,7 +1662,9 @@ class _StreamingTextState extends State<StreamingText>
                 : EdgeInsets.zero,
             decoration: segment.type == SegmentType.blockLaTeX
                 ? BoxDecoration(
-                    color: Theme.of(context).colorScheme.surfaceContainerHighest
+                    color: Theme.of(context)
+                        .colorScheme
+                        .surfaceContainerHighest
                         .withValues(alpha: 0.3),
                     borderRadius: BorderRadius.circular(8.0),
                     border: Border.all(
@@ -1693,15 +1678,14 @@ class _StreamingTextState extends State<StreamingText>
               _formatLatexForDisplay(segment.content),
               style: (widget.latexStyle ?? widget.style ?? const TextStyle())
                   .copyWith(
-                    fontFamily: 'monospace',
-                    fontSize:
-                        (widget.latexStyle?.fontSize ??
-                            widget.style?.fontSize ??
-                            14) *
-                        widget.latexScale,
-                    color: widget.latexStyle?.color ?? Colors.blue,
-                    fontWeight: FontWeight.w500,
-                  ),
+                fontFamily: 'monospace',
+                fontSize: (widget.latexStyle?.fontSize ??
+                        widget.style?.fontSize ??
+                        14) *
+                    widget.latexScale,
+                color: widget.latexStyle?.color ?? Colors.blue,
+                fontWeight: FontWeight.w500,
+              ),
             ),
           ),
         );
@@ -1719,94 +1703,8 @@ class _StreamingTextState extends State<StreamingText>
     );
   }
 
-  /// Auto-close any unclosed inline markdown tokens so that partially streamed
-  /// text renders correctly (e.g. `**bold` → `**bold**`).
-  ///
-  /// Strategy: first strip trailing marker characters that are incomplete
-  /// openers or partial closers (e.g. the lone `*` in `**bold*`), then
-  /// auto-close any remaining interior unclosed markers.
-  static String _autoCloseMarkdown(String text) {
-    if (text.isEmpty) return text;
-
-    var result = text;
-
-    // --- Step 1: Strip trailing marker characters ---
-    // These are either incomplete openers with no content yet (e.g. `text **`)
-    // or partial closers being typed (e.g. `**bold*`). In both cases, removing
-    // them and then auto-closing interiors produces correct markdown.
-    result = result.replaceFirst(RegExp(r'\*{1,3}$'), '');
-    result = result.replaceFirst(RegExp(r'~{1,2}$'), '');
-    result = result.replaceFirst(RegExp(r'`$'), '');
-
-    // Strip trailing whitespace — markdown closers placed after a space
-    // (e.g. `*50 *`) are invalid and render literally.
-    result = result.replaceFirst(RegExp(r'[ \t]+$'), '');
-
-    if (result.isEmpty) return '';
-
-    // --- Step 2: Auto-close remaining unclosed markers ---
-    final buf = StringBuffer(result);
-
-    // Bold (**) and italic (*) — skip list markers (* at line start + space)
-    int boldCount = 0;
-    int italicCount = 0;
-    for (int i = 0; i < result.length; i++) {
-      if (result[i] == '*') {
-        // Detect list markers: * at start of line followed by space
-        if (i + 1 < result.length && result[i + 1] == ' ') {
-          int j = i - 1;
-          while (j >= 0 && result[j] == ' ') {
-            j--;
-          }
-          if (j < 0 || result[j] == '\n') {
-            continue; // skip list marker
-          }
-        }
-
-        if (i + 1 < result.length && result[i + 1] == '*') {
-          boldCount++;
-          i++; // skip next *
-        } else {
-          italicCount++;
-        }
-      }
-    }
-    if (boldCount.isOdd) buf.write('**');
-    if (italicCount.isOdd) buf.write('*');
-
-    // Strikethrough (~~)
-    int strikeCount = 0;
-    for (int i = 0; i < result.length - 1; i++) {
-      if (result[i] == '~' && result[i + 1] == '~') {
-        strikeCount++;
-        i++;
-      }
-    }
-    if (strikeCount.isOdd) buf.write('~~');
-
-    // Inline code (`)
-    int backtickCount = 0;
-    for (int i = 0; i < result.length; i++) {
-      if (result[i] == '`') backtickCount++;
-    }
-    if (backtickCount.isOdd) buf.write('`');
-
-    // Links: unclosed [text](url → close the parenthesis
-    final lastBracket = result.lastIndexOf('[');
-    if (lastBracket != -1) {
-      final closeBracket = result.indexOf(']', lastBracket);
-      if (closeBracket != -1 &&
-          closeBracket + 1 < result.length &&
-          result[closeBracket + 1] == '(') {
-        final closeParen = result.indexOf(')', closeBracket + 2);
-        if (closeParen == -1) {
-          buf.write(')');
-        }
-      }
-    }
-
-    return buf.toString();
-  }
+  /// Delegates to the top-level [autoCloseMarkdown] utility.
+  static String _autoCloseMarkdown(String text) => autoCloseMarkdown(text);
 
   Widget _buildSimpleMarkdown() {
     if (!widget.markdownEnabled) {
@@ -1824,9 +1722,8 @@ class _StreamingTextState extends State<StreamingText>
 
     // While animating, auto-close unclosed markdown tokens so partial text
     // renders correctly (e.g. `**bold` shows as bold instead of literal `**`).
-    final renderText = _isAnimationActive
-        ? _autoCloseMarkdown(currentText)
-        : currentText;
+    final renderText =
+        _isAnimationActive ? _autoCloseMarkdown(currentText) : currentText;
 
     // Use gpt_markdown's GptMarkdown widget
     final markdownWidget = GptMarkdown(
