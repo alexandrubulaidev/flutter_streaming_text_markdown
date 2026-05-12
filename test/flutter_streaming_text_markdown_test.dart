@@ -155,7 +155,8 @@ void main() {
           home: StreamingTextMarkdown(
             text: '![alt](https://example.com/image.png)',
             markdownEnabled: true,
-            imageBuilder: (context, url) => const Icon(Icons.image),
+            imageBuilder: (context, url, width, height) =>
+                const Icon(Icons.image),
           ),
         ),
       );

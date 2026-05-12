@@ -23,6 +23,7 @@ export 'src/theme/streaming_text_theme.dart';
 export 'src/controller/streaming_text_controller.dart';
 export 'src/presets/animation_presets.dart';
 import 'package:flutter/material.dart';
+import 'package:gpt_markdown/custom_widgets/markdown_config.dart';
 import 'src/streaming/streaming_text.dart';
 import 'src/theme/streaming_text_theme.dart';
 import 'src/controller/streaming_text_controller.dart';
@@ -141,7 +142,7 @@ class StreamingTextMarkdown extends StatefulWidget {
   final int shimmerLineCount;
 
   /// Custom builder for images in markdown content.
-  final Widget Function(BuildContext context, String imageUrl)? imageBuilder;
+  final ImageBuilder? imageBuilder;
 
   /// Callback when a link is tapped in markdown content.
   final void Function(String url, String title)? onLinkTap;

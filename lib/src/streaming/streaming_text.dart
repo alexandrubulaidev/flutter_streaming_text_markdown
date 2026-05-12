@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'dart:async';
+import 'package:gpt_markdown/custom_widgets/markdown_config.dart';
 import 'package:gpt_markdown/gpt_markdown.dart';
 import '../controller/streaming_text_controller.dart';
 import '../utils/latex_processor.dart';
@@ -141,7 +142,7 @@ class StreamingText extends StatefulWidget {
   final bool trailingFadeEnabled;
 
   /// Custom builder for images in markdown content.
-  final Widget Function(BuildContext context, String imageUrl)? imageBuilder;
+  final ImageBuilder? imageBuilder;
 
   /// Callback when a link is tapped in markdown content.
   final void Function(String url, String title)? onLinkTap;
